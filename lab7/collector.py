@@ -1,11 +1,15 @@
 import imaplib
 import email
 import os
+from dotenv import load_dotenv
 import time
 
+
+load_dotenv()
+
 # Connect to the email server
-mail = imaplib.IMAP4_SSL("imap.gmail.com")
-mail.login("admin@example.com", "password")
+mail = imaplib.IMAP4_SSL(host=str(os.getenv("IMAP_HOST")), port=int(os.getenv("IMAP_PORT")))
+mail.login(user=str(os.getenv("EMAIL_LOGIN")), password=str(os.getenv("EMAIL_PASSWORD")))
 mail.select("inbox")
 
 while True:

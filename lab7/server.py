@@ -24,7 +24,7 @@ def send_mail(sender, recipient, subject, body):
     message.attach(MIMEText(body))
 
     # Create a secure SMTP connection and send the message
-    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server = smtplib.SMTP(host=str(os.getenv("SMTP_HOST")), port=int(os.getenv("SMTP_PORT")))
     server.starttls()
     server.login(sender, "password")
     text = message.as_string()
