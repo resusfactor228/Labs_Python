@@ -1,6 +1,8 @@
 import os
+from dotenv import load_dotenv
 import socket
 import smtplib
+import time
 import uuid
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -26,7 +28,7 @@ def send_mail(sender, recipient, subject, body):
     # Create a secure SMTP connection and send the message
     server = smtplib.SMTP(host=str(os.getenv("SMTP_HOST")), port=int(os.getenv("SMTP_PORT")))
     server.starttls()
-    server.login(sender, "password")
+    server.login(sender, os.getenv("PASSWORD_FOR_APP"))  # requires password of sender's account, but our sender is also recipient in both cases, so...
     text = message.as_string()
     server.sendmail(sender, recipient, text)
     server.quit()
@@ -45,8 +47,6 @@ def listen_for_messages():
     while True:
         # Accept an incoming connection
         connection, address = s.accept()
-
-        print(f"Connected by: {address}")
 
         # Receive email and message from the client
         data = connection.recv(1024).decode()
@@ -67,7 +67,8 @@ def listen_for_messages():
 
         # Send email to the administrator
         sender = email
-        subject = f"[Ticket #{ticket_id}] New message from {sender}"
+        subject = f"[Ticket #{ticket_id}]\n New message from {sender}\n"
+
         recipient = os.getenv("EMAIL_LOGIN")
         body = f"{email} wrote:\n\n{message}"
 
@@ -81,4 +82,5 @@ def listen_for_messages():
 
 
 if __name__ == "__main__":
+    load_dotenv()
     listen_for_messages()

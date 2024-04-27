@@ -25,8 +25,10 @@ def send_email():
         if response == "OK":
             print("Email sent successfully!")
             break
-        else:
+        elif response:
             print(f"Error: {response}")
+        else:
+            print("Response from server had not been sended!")
 
     # Close the socket
     s.close()
